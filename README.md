@@ -4,7 +4,7 @@
 * **Team members**:
   * Contact person: TODO@andrew.cmu.edu
   * TODO@andrew.cmu.edu
-  * TODO@andrew.cmu.edu
+  * jiechenx@andrew.cmu.edu
   * TODO@andrew.cmu.edu
 * **Track**: TODO (one of Narrative, Model, or Interactive Visualization/Application)
 
