@@ -6,7 +6,7 @@
   * chuhanf@andrew.cmu.edu
   * jiechenx@andrew.cmu.edu
   * TODO@andrew.cmu.edu
-* **Track**: TODO (one of Narrative, Model, or Interactive Visualization/Application)
+* **Track**: Model
 
 ## Work distribution
 
