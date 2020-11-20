@@ -4,6 +4,7 @@ import pandas as pd
 import random
 import altair as alt
 from wordcloud import WordCloud
+from sentiment_transfer import sentiment_transfer
 ## model and data storage
 
 sentiment_evaluation_model = None
