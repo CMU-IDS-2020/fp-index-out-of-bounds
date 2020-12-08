@@ -4,7 +4,9 @@ import pandas as pd
 import random
 import altair as alt
 from wordcloud import WordCloud
+from textblob import TextBlob
 from sentiment_transfer import sentiment_transfer
+
 ## model and data storage
 
 sentiment_evaluation_model = None
@@ -29,16 +31,21 @@ def __generate_random_scores__(num_sample = 5000, mean=2.5):
     sentiment_scores = pd.DataFrame(data=sentiment_scores, columns=['Sentiment'])
     return sentiment_scores
 
-def __transform_sent_with_model__(sentences):
-    pass
+def __transform_sent_with_model__(sentences, target_level):
+    re = []
+    for s in sentences:
+        re.append(sentiment_transfer(s, target_level))
+    return pd.DataFrame(re)
+
 
 def __transform_styl_with_model__(sentences):
     pass
 
 def __evaluate_sent_with_model__(sentences):
-    pass
+    # clean_data = [clean_line(s) for s in sentences]
+    return pd.DataFrame([TextBlob(s).sentiment.polarity for s in sentences]).apply(lambda x: 10*x)
 
-def __sentiment_evaluation__(sentences, test = True, target=None):
+def __sentiment_evaluation__(sentences, test = False, target=None):
     num_of_sentences = len(sentences)
     if sentiment_evaluation_model is None or test:
         if target is not None:
@@ -46,24 +53,26 @@ def __sentiment_evaluation__(sentences, test = True, target=None):
         else:
             scores = __generate_random_scores__(num_of_sentences)
     else:
-        scores = __evaluate_sent_with_model__()
+        scores = __evaluate_sent_with_model__(sentences)
     # else do inference using the evaluation model
     return scores
 
 ## application initialization functions
 
 def get_sentiment_evaluation_model():
-    pass
+    return True
 
 def get_sentiment_transformation_model():
-    pass
+    return True
 
 def get_style_transfer_model():
     pass
 
-def get_data_source(test=True):  
+def get_data_source(test=False):
     if test:
         data = __generate_random_sentences__()
+    else:
+        data = pd.read_csv('./data/yelp_review_data.csv', names=['Sentences'])
     return data
 
 @st.cache
@@ -86,17 +95,17 @@ def transform_style(sentences, test = True):
     return sentences
 
 #@st.cache
-def transform_sentiment(sentences, target_level, test = True):
+def transform_sentiment(sentences, target_level, test = False):
     num_of_sentences = len(sentences)
     if sentiment_transformation_model is None or test:
         sentences = __generate_random_sentences__(num_of_sentences).iloc[:,0]
     else: # else do inference using the tanformation model
-        sentences = __transform_sent_with_model__(sentences)
+        sentences = __transform_sent_with_model__(sentences, target_level)
     sentences.columns= ['Transformed Sentences']
     return sentences
 
 @st.cache
-def sentiment_evaluation_source(sentences, test = True):
+def sentiment_evaluation_source(sentences, test = False):
     return __sentiment_evaluation__(sentences, test)
 
 @st.cache
@@ -117,6 +126,7 @@ def visualize_word_cloud(data_processed):
 def sentiment_transformation_exploration(source):
     # evaluate origianl data
     sentiment_score = sentiment_evaluation_source(source.loc[:,'Sentences'])
+    sentiment_score.column = ['Sentiment']
     mean_score = 0.2*sentiment_score.mean()[0]//0.2
     # select transformation level
     sentiment_transform_level = st.slider('Transform the Sentiment (Higher means more positive)', 1.0, 5.0, value=float(mean_score), step=0.2)
@@ -157,10 +167,11 @@ def sentiment_transformation_exploration(source):
 def dataset_exploration(source):
     # evaluate data and preprocess
     sentiment_score = sentiment_evaluation_source(source.loc[:,'Sentences'])
+    sentiment_score.columns = ['Sentiment']
     data_processed = pd.concat([source, sentiment_score], axis = 1)
-    speaker = st.selectbox('Select a Speaker from the data', ["All"] + list(source.loc[:,'Speaker'].unique()))
-    if speaker != 'All':
-        data_processed = data_processed[data_processed.loc[:,'Speaker']==speaker]
+    # speaker = st.selectbox('Select a Speaker from the data', ["All"] + list(source.loc[:,'Speaker'].unique()))
+    # if speaker != 'All':
+    #     data_processed = data_processed[data_processed.loc[:,'Speaker']==speaker]
     
     # output original text and corresponding sentiment score  
     wc_img = visualize_word_cloud(data_processed)
@@ -174,7 +185,8 @@ def dataset_exploration(source):
             density='value',
             bandwidth=0.3,
             groupby=['Measurement_type'],
-            extent= [1, 5],
+            #extent= [1,5],
+            extent=[-10,10],
         ).mark_area().encode(
             alt.X('value:Q'),
             alt.Y('density:Q'),
@@ -187,21 +199,31 @@ def single_sentence_exploration():
     user_input = st.text_area("Input Sentences", "Input Here")
     st.subheader("Your Input")
     st.write(user_input)
-    st.subheader("The input sentence is most similar to:")
-    st.write("Speaker A")
-    sentiment_score = float(0.2*sentiment_evaluation_source([user_input]).iloc[0]//0.2)
-    sentiment_transform_level = st.slider('Transform the Sentiment (Higher means more positive)', 1.0, 5.0, value=sentiment_score, step=0.2)
+    # st.subheader("The input sentence is most similar to:")
+    # st.write("Speaker A")
+    sentiment_score = int(0.2*sentiment_evaluation_source([user_input]).iloc[0]//0.2)
+
+    sentiment_transform_level = st.slider('Transform the Sentiment (Higher means more positive)', -10, 10, value=sentiment_score, step=1)
+
     if sentiment_transform_level != sentiment_score and user_input != "Input Here":
-        transform_outcome = transform_sentiment([user_input], sentiment_transform_level).iloc[0]
+        transform_outcome = transform_sentiment([user_input], sentiment_transform_level).iloc[0][0]
+        st.subheader('Your Transformed Score')
+        transformed_score = int(0.2*sentiment_evaluation_source([transform_outcome]).iloc[0]//0.2)
+        st.write(str(transformed_score))
+    elif user_input != 'Input Here':
+        st.subheader('Your Sentiment Score')
+        st.write(str(sentiment_score))
+        transform_outcome = user_input
     else:
         transform_outcome = user_input
     st.subheader("Transformation Result")
     st.write(transform_outcome)
-    st.subheader("The transformed sentence is most similar to:")
-    st.write("Speaker B")
+    # st.subheader("The transformed sentence is most similar to:")
+    # st.write("Speaker B")
     
 def visualize_though_model(data):
-    level = st.selectbox('Select in what aspect you want to explore', ['Sentence Level', 'Dataset Level'])
+    # level = st.selectbox('Select in what aspect you want to explore', ['Sentence Level', 'Dataset Level'])
+    level = 'Sentence Level'
     if level == 'Dataset Level':
         sentiment_transformation_exploration(data)
     elif level == 'Sentence Level':

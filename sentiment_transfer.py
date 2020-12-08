@@ -43,6 +43,8 @@ from data import (prepare_data,
 
 # In[4]:
 
+import nltk
+nltk.download('punkt')
 
 def get_args():
     ######################################################################################
@@ -265,7 +267,7 @@ def sentiment_transfer(sentence, epsilon):
 
 if __name__ == '__main__':
     sentence = "This restaurant is the most horrible place I've ever been to. Everything is disgusting and dirty."
-    print(sentiment_transfer(sentence, 5))
+    # print(sentiment_transfer(sentence, 5))
 
 
 # In[ ]:
