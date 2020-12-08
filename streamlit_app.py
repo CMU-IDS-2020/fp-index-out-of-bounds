@@ -6,7 +6,7 @@ import altair as alt
 from wordcloud import WordCloud
 from textblob import TextBlob
 from sentiment_transfer import sentiment_transfer
-
+from gector.gec_model import GecBERTModel
 ## model and data storage
 
 sentiment_evaluation_model = None
@@ -66,7 +66,7 @@ def get_sentiment_transformation_model():
     return True
 
 def get_style_transfer_model():
-    pass
+    return GecBERTModel(vocab_path='vocabulary', model_paths=['roberta_1_gector.th'])
 
 def get_data_source(test=False):
     if test:
@@ -75,7 +75,7 @@ def get_data_source(test=False):
         data = pd.read_csv('./data/yelp_review_data.csv', names=['Sentences'])
     return data
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def init_application():
     sentiment_evaluation_model = get_sentiment_evaluation_model()
     sentiment_transformation_model = get_sentiment_transformation_model()
@@ -207,6 +207,8 @@ def single_sentence_exploration():
 
     if sentiment_transform_level != sentiment_score and user_input != "Input Here":
         transform_outcome = transform_sentiment([user_input], sentiment_transform_level).iloc[0][0]
+        # st.write(transform_outcome)
+        transform_outcome = style_transfer_model.correct(transform_outcome)
         st.subheader('Your Transformed Score')
         transformed_score = int(0.2*sentiment_evaluation_source([transform_outcome]).iloc[0]//0.2)
         st.write(str(transformed_score))
@@ -247,7 +249,6 @@ def main_text_style_transfer():
         visualize_though_model(data)
 
 main_text_style_transfer()
-
 
 
 

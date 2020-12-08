@@ -20,7 +20,7 @@ from matplotlib import pyplot as plt
 
 # In[2]:
 
-from alternative.predict import preditction_with_beam_search
+# from alternative.predict import preditction_with_beam_search
 from model import make_model, Classifier, NoamOpt, LabelSmoothing, fgim_attack
 from data import (prepare_data,
                   non_pair_data_loader, 
@@ -261,12 +261,12 @@ def sentiment_transfer(sentence, epsilon):
     batch = create_batch(args, sentence, epsilon)
     return predict(args, ae_model, dis_model, batch, abs(epsilon))
 
-def sentiment_transfer_drg(sentence, target_attitude):
-    if target_attitude == "positive":
-        sentence = "<POS> <CON_START> " + sentence+ " <START>"
-    else:
-        sentence = "<NEG> <CON_START> " + sentence+ " <START>"
-    return preditction_with_beam_search(sentence, 4)[0]
+# def sentiment_transfer_drg(sentence, target_attitude):
+#     if target_attitude == "positive":
+#         sentence = "<POS> <CON_START> " + sentence+ " <START>"
+#     else:
+#         sentence = "<NEG> <CON_START> " + sentence+ " <START>"
+#     return preditction_with_beam_search(sentence, 4)[0]
 # In[42]:
 
 
