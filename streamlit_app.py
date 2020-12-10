@@ -198,8 +198,8 @@ def dataset_exploration(source):
 def single_sentence_exploration():
     user_input = st.text_area("Input Sentences", "Input Here")
     st.subheader("Your Input")
-    st.write(user_input)
     user_input = style_transfer_model.correct(user_input)
+    st.write(user_input)
     # st.subheader("The input sentence is most similar to:")
     # st.write("Speaker A")
     sentiment_score = int(0.2*sentiment_evaluation_source([user_input]).iloc[0]//0.2)
