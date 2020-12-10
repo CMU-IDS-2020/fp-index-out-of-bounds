@@ -197,8 +197,10 @@ def dataset_exploration(source):
 
 def single_sentence_exploration():
     user_input = st.text_area("Input Sentences", "Input Here")
+    cb_input = st.checkbox('Enable Input Grammar Correction')
     st.subheader("Your Input")
-    user_input = style_transfer_model.correct(user_input)
+    if cb_input:
+        user_input = style_transfer_model.correct(user_input)
     st.write(user_input)
     # st.subheader("The input sentence is most similar to:")
     # st.write("Speaker A")
@@ -206,10 +208,12 @@ def single_sentence_exploration():
 
     sentiment_transform_level = st.slider('Transform the Sentiment (Higher means more positive)', -10, 10, value=sentiment_score, step=1)
 
+    cb_output = st.checkbox('Enable Output Grammar Correction')
     if sentiment_transform_level != sentiment_score and user_input != "Input Here":
         transform_outcome = transform_sentiment([user_input], sentiment_transform_level).iloc[0][0]
         # st.write(transform_outcome)
-        transform_outcome = style_transfer_model.correct(transform_outcome)
+        if cb_output:
+            transform_outcome = style_transfer_model.correct(transform_outcome)
         st.subheader('Your Transformed Score')
         transformed_score = int(0.2*sentiment_evaluation_source([transform_outcome]).iloc[0]//0.2)
         st.write(str(transformed_score))
