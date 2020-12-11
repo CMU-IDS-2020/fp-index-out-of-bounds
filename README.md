@@ -12,6 +12,15 @@
 
 Update towards the end of the project.
 
+Jingyuan Li
+
+Chuhan Feng
+
+Jiecheng Xu
+- model integration
+- application deployment
+- demo video
+
 ## Deliverables
 
 ### Proposal
