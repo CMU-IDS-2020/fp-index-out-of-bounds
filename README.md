@@ -5,7 +5,6 @@
   * Contact person: jingyua4@andrew.cmu.edu
   * chuhanf@andrew.cmu.edu
   * jiechenx@andrew.cmu.edu
-  * TODO@andrew.cmu.edu
 * **Track**: Model
 
 ## Work distribution
@@ -14,12 +13,23 @@ Update towards the end of the project.
 
 Jingyuan Li
 
+- streamlit framework construction
+- algorithm design, model investigation
+- presentation introduction
+- introduction, related works sections in report
+
 Chuhan Feng
+
+- model testing, selection
+- model tuning
+- model introduction in presentation
+- report model section in report
 
 Jiecheng Xu
 - model integration
 - application deployment
 - demo video
+- results and discussion, conclusion sections in report
 
 ## Deliverables
 
@@ -38,7 +48,7 @@ Jiecheng Xu
 - [X] All code for the project should be in the repo.
 - [X] A 5 minute video demonstration.
 - [X] Update Readme according to Canvas instructions.
-- [ ] A detailed project report. The contact should submit the video and report as a PDF on Canvas.
+- [x] A detailed project report. The contact should submit the video and report as a PDF on Canvas.
 
 ### Deployment Instruction
 - Please clone the entire github repo to your local repository, all the dependencies are recorded in the **requirement.txt** (NOT gector.requirement.txt).
